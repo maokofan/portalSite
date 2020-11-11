@@ -1,4 +1,4 @@
-# 功能清单  
+# 功能  
 ## 门户前端
   新闻动态	/通知公告	/培训专栏	/制度文档	/项目进度	/质量专栏	/荣誉中亚	/知识共享     
 ## 门户后台   
@@ -23,6 +23,7 @@ test1 |     test1 |     测试内容发布者
 test2 |     test2 |    测试内容审核者  
 testAdmmin| testAdmin |  测试管理员  
 # 部署说明  
+最新版本： https://github.com/maokofan/portalSite/releases/tag/v0.1
 1.安装mysql和jdk  
 2.新建数据库zytm_news（navicat）  
 3.导入sql目录下的sql文件  
