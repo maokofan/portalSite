@@ -28,7 +28,8 @@ testAdmmin| testAdmin |  测试管理员
 2.新建数据库zytm_news（navicat）  
 3.导入sql目录下的sql文件  
 4.配置nginx  
-5.执行发布版本portalSiteJServer目录下start脚本(windows-start.bat / linux -start.sh)  
+5.修改portalSiteJServer目录下application.yml中数据库配置  
+6.执行portalSiteJServer目录下start脚本(windows-start.bat / linux -start.sh)  
 nginx.conf中配置示例
 ```nginx 配置示例
 server {
