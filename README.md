@@ -23,7 +23,7 @@ test1 |     test1 |     测试内容发布者
 test2 |     test2 |    测试内容审核者  
 testAdmmin| testAdmin |  测试管理员  
 # 部署说明  
-最新版本： https://github.com/maokofan/portalSite/releases/tag/v0.1
+最新版本： https://github.com/maokofan/portalSite/releases/tag/v0.1  
 1.安装mysql和jdk  
 2.新建数据库zytm_news（navicat）  
 3.导入sql目录下的sql文件  
