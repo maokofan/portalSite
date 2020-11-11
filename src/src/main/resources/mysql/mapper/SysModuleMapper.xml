@@ -5,32 +5,28 @@
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="modulename" jdbcType="VARCHAR" property="modulename"/>
         <result column="parent" jdbcType="BIGINT" property="parent"/>
-        <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime"/>
     </resultMap>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from t_sys_module
     where id = #{id,jdbcType=BIGINT}
   </delete>
     <insert id="insert" parameterType="zy.news.web.bean.SysModule">
-    insert into t_sys_module (id, modulename, parent, 
-      updatetime)
-    values (#{id,jdbcType=BIGINT}, #{modulename,jdbcType=VARCHAR}, #{parent,jdbcType=BIGINT}, 
-      #{updatetime,jdbcType=TIMESTAMP})
+    insert into t_sys_module (id, modulename, parent)
+    values (#{id,jdbcType=BIGINT}, #{modulename,jdbcType=VARCHAR}, #{parent,jdbcType=BIGINT})
   </insert>
     <update id="updateByPrimaryKey" parameterType="zy.news.web.bean.SysModule">
     update t_sys_module
     set modulename = #{modulename,jdbcType=VARCHAR},
-      parent = #{parent,jdbcType=BIGINT},
-      updatetime = #{updatetime,jdbcType=TIMESTAMP}
+      parent = #{parent,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, modulename, parent, updatetime
+    select id, modulename, parent
     from t_sys_module
     where id = #{id,jdbcType=BIGINT}
   </select>
     <select id="selectAll" resultMap="BaseResultMap">
-    select id, modulename, parent, updatetime
+    select id, modulename, parent
     from t_sys_module
   </select>
     <select id="getChildModules" resultType="zy.news.web.bean.SysModule">

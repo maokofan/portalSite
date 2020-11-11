@@ -4,7 +4,10 @@ import maoko.common.agorithm.AesCipher;
 import maoko.common.file.FileIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import zy.news.common.db.base.DbExampleUtil;
+import zy.news.web.ui.param.SafePass;
 import zy.news.web.zsys.bean.Page;
+import zy.news.web.zsys.bean.PageValuesResult;
 import zy.news.web.zsys.bean.ValuesPage;
 import zy.news.common.exception.LoginitException;
 import zy.news.common.exception.WarningException;
@@ -62,7 +65,7 @@ public class SvrImpAuthUser implements IAuthUser {
 
     @Override
     public List<SysUser> selectAll() {
-        return mapper.selectAll();
+        return mapper.selectAll("");
     }
 
     @Override
@@ -111,12 +114,11 @@ public class SvrImpAuthUser implements IAuthUser {
     }
 
     @Override
-    public void updatePasswd(SysUser user, String passwd) throws WarningException {
-        if (SysUser.ADMIN_ROLE.equals(user.getUsername())) {
+    public void updatePasswd(SysUser user) throws WarningException {
+      /*  if (SysUser.ADMIN_ROLE.equals(user.getUsername())) {
             throw new WarningException("禁止操作管理员账户");
-        }
-        user.setPasswd(AesCipher.Encrypt(passwd));
-        mapper.updatePasswd(user.getPasswd(), user.getId());
+        }*/
+        mapper.updatePasswd(user.getAesPassWd(), user.getId());
     }
 
     @Override
@@ -130,6 +132,7 @@ public class SvrImpAuthUser implements IAuthUser {
     @Override
     public ValuesPage selectAllPage(Page page) throws Exception {
         PageValuesParam pvparam = new PageValuesParam(mapper, "selectAll");
+        pvparam.addParam(null);
         return ServiceUtil.getValuePage(page, pvparam);
     }
 
@@ -153,5 +156,12 @@ public class SvrImpAuthUser implements IAuthUser {
     public void unBindSpecUserRole(RoleUserBind userBind) throws Exception {
         userBind.validate();
         mapper.unBindSpecUserRole(userBind);
+    }
+
+    @Override
+    public PageValuesResult<SysUser> selectAllPage(Page page, String fastSearch) throws Exception {
+        PageValuesParam pvparam = new PageValuesParam(mapper, "selectAll");
+        pvparam.addParam(DbExampleUtil.getLikeValue(fastSearch));
+        return ServiceUtil.getValuePageResult(page, pvparam);
     }
 }

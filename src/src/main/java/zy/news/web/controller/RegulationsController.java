@@ -29,10 +29,11 @@ public class RegulationsController {
     @GetMapping("existTitle")
     @ExcuteInterfaceDsrc("标题是否重复")
     @ExcutePermission
-    public boolean existTitle(@RequestParam String title) throws Exception {
+    public boolean existTitle(@RequestParam String title, @RequestParam Long id) throws Exception {
         Regulations record = new Regulations();
         record.setTitle(title);
-        return regulationsService.exist(record);
+        record.setId(id);
+        return regulationsService.exist(record,null);
     }
 
     @PostMapping("addRegulations")

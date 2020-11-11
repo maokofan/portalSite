@@ -28,15 +28,14 @@
   </insert>
     <update id="updateByPrimaryKey" parameterType="zy.news.web.bean.Comment">
     update t_comment
-    set articleid = #{articleid,jdbcType=BIGINT},
+    set
+      notRiview=0,
+      articleid = #{articleid,jdbcType=BIGINT},
       content = #{content,jdbcType=VARCHAR},
       author = #{author,jdbcType=VARCHAR},
       ip = #{ip,jdbcType=VARCHAR},
-      publishdate = #{publishdate,jdbcType=TIMESTAMP},
-      reviewstatus = #{reviewstatus,jdbcType=TINYINT},
-      reviewdate = #{reviewdate,jdbcType=TIMESTAMP},
-      reviewComment = #{reviewcomment,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=BIGINT}
+      publishdate = #{publishdate,jdbcType=TIMESTAMP}
+    where reviewstatus=0 and id = #{id,jdbcType=BIGINT}
   </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select id, articleid, content, author, ip, publishdate, reviewstatus,reviewer, reviewdate,
@@ -73,6 +72,9 @@
         ORDER BY tmp_comments.publishdate DESC,tmp_comments.articleTitle ASC
     </select>
     <select id="selectAllSimple" resultType="zy.news.web.bean.CommentSimple">
+        select  (@rownum:=@rownum+1) as seqnum,
+        cmt_seq.*
+        from(
         SELECT
         cmt.*
         <if test="articletype != null">
@@ -116,10 +118,14 @@
         <if test="reviewStatus == 2">
             ,reviewstatus ASC
         </if>
+        )cmt_seq,
+        (select @rownum:=0 )t_row_num
     </select>
     <update id="updateReviewInfo" parameterType="zy.news.web.ui.result.ReviewInfo">
         UPDATE t_comment
-        SET reviewstatus = #{reviewstatus,jdbcType=TINYINT},
+        SET
+        notRiview=1,
+        reviewstatus = #{reviewstatus,jdbcType=TINYINT},
         reviewer = #{reviewer,jdbcType=VARCHAR},
         reviewdate = #{reviewdate,jdbcType=TIMESTAMP}
         <if test="reviewComment != null and reviewComment !=''">

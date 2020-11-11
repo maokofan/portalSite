@@ -10,7 +10,6 @@ import java.util.Date;
 public class Quality extends ContentBase implements IValidate {
     private Long id;
     private Byte type;
-    private String title;
     private String author;
     private Date publishdate;
     private Long pageview;
@@ -40,9 +39,6 @@ public class Quality extends ContentBase implements IValidate {
 
     @Override
     public void validate() throws Exception {
-        if (StringUtil.isStrNullOrWhiteSpace(title)) {
-            throw new Exception("title为空");
-        }
         if (null == type) {
             throw new Exception("type为空！");
         }

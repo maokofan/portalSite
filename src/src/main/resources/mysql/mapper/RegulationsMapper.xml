@@ -37,7 +37,7 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select id, title, author, publishdate, reg.dptid, pageview,dept.dptname,
         (SELECT CONCAT(id,'|',title) FROM t_regulations WHERE  publishdate > reg.publishdate ORDER BY
-        publishdate DESC LIMIT 1) as `front`,
+        publishdate ASC LIMIT 1) as `front`,
         (SELECT CONCAT(id,'|',title) FROM t_regulations WHERE  publishdate <![CDATA[<]]> reg.publishdate ORDER BY
         publishdate DESC LIMIT 1) as `next`
     from t_regulations reg

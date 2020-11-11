@@ -37,10 +37,11 @@ public class NoticeController {
     @GetMapping("existTitle")
     @ExcuteInterfaceDsrc("标题是否重复")
     @ExcutePermission
-    public boolean existTitle(@RequestParam String title) throws Exception {
+    public boolean existTitle(@RequestParam String title, @RequestParam Long id) throws Exception {
         Notice notice = new Notice();
         notice.setTitle(title);
-        return noticeService.exist(notice);
+        notice.setId(id);
+        return noticeService.exist(notice,null);
     }
 
     @PostMapping("addNotice")
@@ -75,7 +76,11 @@ public class NoticeController {
     @ExcuteInterfaceDsrc("获取通告列表")
     @ExcutePermission(userType = ExcuteUserType.游客)
     public PageValuesResult<NoticeSimple> getPublishNotice(@RequestBody Page page) throws Exception {
-        return noticeService.getNotice(page, ReviewStatus.已通过);
+        PageReview pageReview = new PageReview();
+        pageReview.setCurrent(page.getCurrent());
+        pageReview.setPageSize(page.getSize());
+        pageReview.setStatus(ReviewStatus.已通过.getValue());
+        return noticeService.getNotice(pageReview);
     }
 
     @GetMapping("getNoticeDetail")
@@ -93,7 +98,7 @@ public class NoticeController {
     @ExcuteInterfaceDsrc("获取已发布文章列表")
     @ExcutePermission
     public PageValuesResult<NoticeSimple> getReviewRecords(@RequestBody PageReview param) throws Exception {
-        return noticeService.getNotice(param.getPage(), param.getStatus());
+        return noticeService.getNotice(param);
     }
 
     @PostMapping("reviewNotice")

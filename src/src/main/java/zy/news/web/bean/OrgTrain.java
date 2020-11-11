@@ -14,7 +14,6 @@ import java.util.List;
 @Data
 public class OrgTrain extends ContentBase implements IValidate {
     private Long id;
-    private String title;
     private String author;
     private Date publishdate;
     private Long pageview;
@@ -24,9 +23,6 @@ public class OrgTrain extends ContentBase implements IValidate {
 
     @Override
     public void validate() throws Exception {
-        if (StringUtil.isStrNullOrWhiteSpace(title)) {
-            throw new Exception("标题title字段为空！");
-        }
         super.validate();
     }
 }

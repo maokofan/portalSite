@@ -11,6 +11,7 @@ import zy.news.web.service.IAnnex;
 import zy.news.web.service.IFiles;
 import zy.news.web.service.INews;
 import zy.news.web.service.IUserCache;
+import zy.news.web.ui.param.PageReview;
 import zy.news.web.ui.param.ReviewStatus;
 import zy.news.web.ui.result.ReviewInfo;
 import zy.news.web.zsys.bean.Page;
@@ -45,15 +46,26 @@ public class SvrImpNews extends ServiceBase implements INews {
     }
 
     @Override
-    public PageValuesResult<NewsSimple> getNews(Page page, ReviewStatus reviewStatus) throws Exception {
+    public PageValuesResult<NewsSimple> getNews(PageReview pageReview) throws Exception {
         PageValuesParam<NewsSimple> params = new PageValuesParam<>(mapper, "selectAllNewsSimple");
-        params.addParam(reviewStatus.getValue());
-        return ServiceUtil.getValuePageResult(page, params);
+        params.addParam(pageReview.getStatus().getValue());
+        params.addParam(pageReview.getNotReview());
+        return ServiceUtil.getValuePageResult(pageReview.getPage(), params);
     }
 
     @Override
-    public boolean exist(News news) {
-        return mapper.exist(news) > 0;
+    public boolean exist(News record, News tmpRecord) {
+        if (null == tmpRecord &&null != record.getId() && record.getId() > 0) {
+            tmpRecord = mapper.selectRecordWithOutBlobByPrimaryKey(record.getId());
+        }
+        if (tmpRecord == null) {
+            return mapper.exist(record) > 0;
+        } else {
+            if (!record.getTitle().equals(tmpRecord.getTitle())) {
+                return mapper.exist(record) > 0;
+            }
+            return false;
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -61,7 +73,7 @@ public class SvrImpNews extends ServiceBase implements INews {
     public void add(HttpSession session, News news) throws Exception {
         news.validate();
 
-        if (exist(news)) {
+        if (exist(news,null)) {
             throw new Exception("新闻名称已存在，请修改后再试一试！");
         }
         SysUser user = userCache.getUserFromSession(session);
@@ -115,7 +127,7 @@ public class SvrImpNews extends ServiceBase implements INews {
         if (tmpNews == null) {
             throw new Exception("新闻已不存在！");
         }
-        if (!news.getTitle().equals(tmpNews.getTitle()) && exist(news)) {
+        if (exist(news,tmpNews)) {
             throw new Exception(news.getTitle() + "新闻名称已存在，请修改后再试一试！");
         }
         SysUser user = userCache.getUserFromSession(session);

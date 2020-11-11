@@ -12,7 +12,7 @@ spring:
       max-request-size: 500MB
   datasource:
     #数据库配置
-    url: jdbc:mysql://127.0.0.1:3306/news?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://192.168.11.248:3306/news?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
     username: news
     password: news2020
     driver-class-name: com.mysql.cj.jdbc.Driver

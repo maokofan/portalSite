@@ -16,7 +16,6 @@ import java.util.List;
 @Data
 public class Notice extends ContentBase implements IValidate {
     private Long id;
-    private String title;
     private Long ntid;
     private String author;
     private Date publishdate;
@@ -45,14 +44,8 @@ public class Notice extends ContentBase implements IValidate {
 
     @Override
     public void validate() throws Exception {
-        if (StringUtil.isStrNullOrWhiteSpace(title)) {
-            throw new Exception("标题title字段为空！");
-        }
         if (ntid == null) {
             throw new Exception("类型ntid字段为空！");
-        }
-        if (StringUtil.isStrNullOrWhiteSpace(content)) {
-            throw new Exception("内容content字段为空！");
         }
         super.validate();
     }

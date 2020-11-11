@@ -49,13 +49,6 @@ public class CommentController {
     }
 
     //region 评论审核-后台审核
-    @PostMapping("getPassComments")
-    @ExcuteInterfaceDsrc("获取已审核通过评论列表")
-    @ExcutePermission
-    public PageValuesResult<CommentSimple> getPublishComments(@RequestBody Page page) throws Exception {
-        return service.getComments(page, ReviewStatus.已通过);
-    }
-
     @PostMapping("getReviewRecords")
     @ExcuteInterfaceDsrc("获取已发布评论列表")
     @ExcutePermission

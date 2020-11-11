@@ -37,10 +37,11 @@ public class NewsController {
     @GetMapping("existTitle")
     @ExcuteInterfaceDsrc("标题是否重复")
     @ExcutePermission
-    public boolean existTitle(@RequestParam String title) throws Exception {
+    public boolean existTitle(@RequestParam String title, @RequestParam Long id) throws Exception {
         News news = new News();
         news.setTitle(title);
-        return newsService.exist(news);
+        news.setId(id);
+        return newsService.exist(news, null);
     }
 
     @PostMapping("addNews")
@@ -87,14 +88,18 @@ public class NewsController {
     @ExcuteInterfaceDsrc("获取已审核新闻列表")
     @ExcutePermission(userType = ExcuteUserType.游客)
     public PageValuesResult<NewsSimple> getNews(@RequestBody Page page) throws Exception {
-        return newsService.getNews(page, ReviewStatus.已通过);
+        PageReview pageReview = new PageReview();
+        pageReview.setCurrent(page.getCurrent());
+        pageReview.setPageSize(page.getSize());
+        pageReview.setStatus(ReviewStatus.已通过.getValue());
+        return newsService.getNews(pageReview);
     }
 
     @PostMapping("getReviewRecords")
     @ExcuteInterfaceDsrc("获取已发布新闻列表")
     @ExcutePermission
     public PageValuesResult<NewsSimple> getReviewRecords(@RequestBody PageReview param) throws Exception {
-        return newsService.getNews(param.getPage(), param.getStatus());
+        return newsService.getNews(param);
     }
 
     @PostMapping("reviewNews")

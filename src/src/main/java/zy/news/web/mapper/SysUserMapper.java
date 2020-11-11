@@ -18,7 +18,7 @@ public interface SysUserMapper {
 
     SysUser selectByPrimaryKey(Long id);
 
-    List<SysUser> selectAll();
+    List<SysUser> selectAll(@Param("fastSearch") String  fastSearch);
 
     int updateByPrimaryKey(SysUser record);
 

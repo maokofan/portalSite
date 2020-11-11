@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zy.news.web.bean.*;
+import zy.news.web.ui.param.PageReview;
 import zy.news.web.zsys.bean.Page;
 import zy.news.common.exception.WarningException;
 import zy.news.web.mapper.NoticeMapper;
@@ -43,15 +44,26 @@ public class SvrImpNotice extends ServiceBase implements INotice {
     }
 
     @Override
-    public PageValuesResult<NoticeSimple> getNotice(Page page, ReviewStatus reviewStatus) throws Exception {
+    public PageValuesResult<NoticeSimple> getNotice(PageReview pageReview) throws Exception {
         PageValuesParam<NoticeSimple> params = new PageValuesParam<>(mapper, "selectAllNoticeSimple");
-        params.addParam(reviewStatus.getValue());
-        return ServiceUtil.getValuePageResult(page, params);
+        params.addParam(pageReview.getStatus().getValue());
+        params.addParam(pageReview.getNotReview());
+        return ServiceUtil.getValuePageResult(pageReview.getPage(), params);
     }
 
     @Override
-    public boolean exist(Notice record) {
-        return mapper.exist(record) > 0;
+    public boolean exist(Notice record, Notice tmpRecord) {
+        if (null != record.getId() && record.getId() > 0) {
+            tmpRecord = mapper.selectRecordWithOutBlobByPrimaryKey(record.getId());
+        }
+        if (tmpRecord == null) {
+            return mapper.exist(record) > 0;
+        } else {
+            if (!record.getTitle().equals(tmpRecord.getTitle())) {
+                return mapper.exist(record) > 0;
+            }
+            return false;
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -59,7 +71,7 @@ public class SvrImpNotice extends ServiceBase implements INotice {
     public void add(HttpSession session, Notice record) throws Exception {
         record.validate();
 
-        if (exist(record)) {
+        if (exist(record, null)) {
             throw new Exception("通告名称已存在，请修改后再试一试！");
         }
         SysUser user = userCache.getUserFromSession(session);
@@ -104,7 +116,7 @@ public class SvrImpNotice extends ServiceBase implements INotice {
         if (tmpRecord == null) {
             throw new Exception(record.getId() + "通告已不存在！");
         }
-        if (!record.getTitle().equals(tmpRecord.getTitle()) && exist(record)) {
+        if (exist(record, tmpRecord)) {
             throw new Exception(record.getTitle() + "名称已存在，请修改后再试一试！");
         }
         SysUser user = userCache.getUserFromSession(session);

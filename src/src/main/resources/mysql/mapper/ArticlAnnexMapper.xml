@@ -26,8 +26,8 @@
         </foreach>
     </select>
     <delete id="deleteByArtAnnexId" parameterType="java.lang.Long">
-     DELETE FROM t_articleannex artAnnex
-     WHERE artAnnex.articleid=#{articleid,jdbcType=BIGINT}
+     DELETE FROM t_articleannex
+     WHERE articleid=#{articleid,jdbcType=BIGINT}
     </delete>
     <select id="getAnnexRecords" parameterType="java.lang.Long" resultType="zy.news.web.bean.ArticlAnnex">
     SELECT

@@ -25,6 +25,7 @@ public class CommentSimple {
 
     //辅助变量 非数据库变量
     private String reviewstatusStr;
+    private Long seqnum;
 
     public void setReviewstatus(Byte reviewstatus) throws OutOfRangeException {
         this.reviewstatus = reviewstatus;

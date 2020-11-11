@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zy.news.web.bean.*;
 import zy.news.web.mapper.CommentMapper;
+import zy.news.web.ui.param.PageReview;
 import zy.news.web.zsys.bean.Page;
 import zy.news.common.exception.WarningException;
 import zy.news.web.mapper.KnowledgeShareMapper;
@@ -47,7 +48,7 @@ public class SvrImpKnlgeShare extends ServiceBase implements IKnlgeShare {
     }
 
     @Override
-    public PageValuesResult<KnlgeShareSimple> getKnowledgeShares(HttpSession session, Page page, ReviewStatus reviewStatus, boolean isGood) throws Exception {
+    public PageValuesResult<KnlgeShareSimple> getKnowledgeShares(HttpSession session, PageReview pageReview, boolean isGood) throws Exception {
         PageValuesParam<KnlgeShareSimple> params = new PageValuesParam<>(mapper, "selectAllShareSimple");
         String author = "";
         if (null != session) {
@@ -55,14 +56,25 @@ public class SvrImpKnlgeShare extends ServiceBase implements IKnlgeShare {
             author = user.getUsername();
         }
         params.addParam(author);
-        params.addParam(reviewStatus.getValue());
+        params.addParam(pageReview.getStatus().getValue());
+        params.addParam(pageReview.getNotReview());
         params.addParam(isGood);
-        return ServiceUtil.getValuePageResult(page, params);
+        return ServiceUtil.getValuePageResult(pageReview.getPage(), params);
     }
 
     @Override
-    public boolean exist(KnlgeShare record) {
-        return mapper.exist(record) > 0;
+    public boolean exist(KnlgeShare record, KnlgeShare tmpRecord) {
+        if (null == tmpRecord && null != record.getId() && record.getId() > 0) {
+            tmpRecord = mapper.selectRecordWithOutBlobByPrimaryKey(record.getId());
+        }
+        if (tmpRecord == null) {
+            return mapper.exist(record) > 0;
+        } else {
+            if (!record.getTitle().equals(tmpRecord.getTitle())) {
+                return mapper.exist(record) > 0;
+            }
+            return false;
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -70,7 +82,7 @@ public class SvrImpKnlgeShare extends ServiceBase implements IKnlgeShare {
     public void add(HttpSession session, KnlgeShare record) throws Exception {
         record.validate();
 
-        if (exist(record)) {
+        if (exist(record, null)) {
             throw new Exception("通告名称已存在，请修改后再试一试！");
         }
         SysUser user = userCache.getUserFromSession(session);
@@ -116,7 +128,7 @@ public class SvrImpKnlgeShare extends ServiceBase implements IKnlgeShare {
         if (tmpRecord == null) {
             throw new Exception(record.getId() + "已不存在！");
         }
-        if (!record.getTitle().equals(tmpRecord.getTitle()) && exist(record)) {
+        if (exist(record, tmpRecord)) {
             throw new Exception(record.getTitle() + "名称已存在，请修改后再试一试！");
         }
         SysUser user = userCache.getUserFromSession(session);

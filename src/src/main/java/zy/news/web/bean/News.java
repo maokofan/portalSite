@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import lombok.Data;
 import maoko.common.StringUtil;
 import maoko.common.exception.OutOfRangeException;
+import zy.news.common.exception.WarningException;
 import zy.news.web.ui.param.ArticleType;
 import zy.news.web.ui.param.ReviewStatus;
 import zy.news.web.zsys.bean.IValidate;
@@ -16,7 +17,6 @@ public class News extends ContentBase implements IValidate {
 
     private Long id;
     private Long imageid;
-    private String title;
     private Long ntid;
     private String author;
     private Date publishdate;
@@ -44,9 +44,6 @@ public class News extends ContentBase implements IValidate {
 
     @Override
     public void validate() throws Exception {
-        if (StringUtil.isStrNullOrWhiteSpace(title)) {
-            throw new Exception("新闻标题title字段为空！");
-        }
         if (ntid == null) {
             throw new Exception("新闻类型ntid字段为空！");
         }

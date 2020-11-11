@@ -37,7 +37,7 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultType="zy.news.web.bean.Quality">
     select id, `type`, title, author, publishdate,pageview,
         (SELECT CONCAT(id,'|',title) FROM t_quality WHERE  publishdate > quality.publishdate ORDER BY
-        publishdate DESC LIMIT 1) as `front`,
+        publishdate ASC LIMIT 1) as `front`,
         (SELECT CONCAT(id,'|',title) FROM t_quality WHERE  publishdate <![CDATA[<]]> quality.publishdate ORDER BY
         publishdate DESC LIMIT 1) as `next`
     from t_quality quality

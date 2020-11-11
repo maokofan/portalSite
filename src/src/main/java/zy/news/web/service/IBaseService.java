@@ -16,9 +16,10 @@ public interface IBaseService<T> {
      * 判断是否存在
      *
      * @param record
+     * @param tmpRecord
      * @return
      */
-    boolean exist(T record);
+    boolean exist(T record, T tmpRecord);
 
     /**
      * 添加新闻

@@ -32,15 +32,10 @@ public class SvrImpAuthRole implements IAuthRole {
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int deleteByPrimaryKey(Long id) throws WarningException {
-        List<Long> ids = new ArrayList<>(1);
-        ids.add(id);
-        if (mapper.countByExampleRolePerms(ids) > 0) {
-            throw new WarningException("角色-权限中仍存在待删除角色信息，请先取消权限角色关联绑定，再选择此角色进行删除。");
-        }
-        if (mapper.countRoleUsers(ids) > 0) {
-            throw new WarningException("角色-用户中仍存在待删除角色信息，请先取消用户角色关联绑定，再选择此角色进行删除。");
-        }
+        mapper.deleteRoleUsersByRoleId(id);
+        mapper.deleteRolePermsByRoleId(id);
         int count = mapper.deleteByPrimaryKey(id);
         return count;
     }

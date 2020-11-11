@@ -6,6 +6,10 @@ import zy.news.common.exception.WarningException;
 import zy.news.web.bean.SysRole;
 import zy.news.web.bean.SysUser;
 import zy.news.web.ui.param.RoleUserBind;
+import zy.news.web.ui.param.SafePass;
+import zy.news.web.zsys.bean.Page;
+import zy.news.web.zsys.bean.PageValuesResult;
+import zy.news.web.zsys.bean.ValuesPage;
 
 import java.util.List;
 
@@ -45,9 +49,8 @@ public interface IAuthUser extends IBaseCruid<SysUser> {
      * 修改密码
      *
      * @param user
-     * @param passwd
      */
-    void updatePasswd(SysUser user, String passwd) throws WarningException;
+    void updatePasswd(SysUser user) throws WarningException;
 
     /**
      * 获取指定用户已绑定角色列表
@@ -82,4 +85,14 @@ public interface IAuthUser extends IBaseCruid<SysUser> {
      * @throws Exception
      */
     void unBindSpecUserRole(@RequestBody RoleUserBind userBind) throws Exception;
+
+    /**
+     * 用户搜索
+     *
+     * @param page
+     * @param fastSearch
+     * @return
+     * @throws Exception
+     */
+    PageValuesResult<SysUser> selectAllPage(Page page, String fastSearch) throws Exception;
 }

@@ -34,12 +34,15 @@
   </insert>
     <update id="updateByPrimaryKey" parameterType="zy.news.web.bean.News">
     update t_news
-    set imageid = #{imageid,jdbcType=BIGINT},
+    set
+      notRiview=0,
+      imageid = #{imageid,jdbcType=BIGINT},
       title = #{title,jdbcType=VARCHAR},
       ntid = #{ntid,jdbcType=BIGINT},
       author = #{author,jdbcType=VARCHAR},
       publishdate = #{publishdate,jdbcType=TIMESTAMP},
       content = #{content,jdbcType=LONGVARBINARY}
+
     where reviewstatus=0 and id = #{id,jdbcType=BIGINT}
   </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -67,7 +70,9 @@
         FROM
         t_news news
         LEFT JOIN t_newstype newstype ON news.ntid=newstype.ntid
-        <if test="reviewStatus != 2">WHERE news.reviewstatus=#{reviewStatus,jdbcType=TINYINT}</if>
+        WHERE 1=1
+        <if test="reviewStatus != 2">AND news.reviewstatus=#{reviewStatus,jdbcType=TINYINT}</if>
+        <if test="notReview == 1">AND news.notRiview=0</if>
         ) tmp_news
         LEFT JOIN t_file file ON file.fid = tmp_news.imageid
         ORDER BY publishdate DESC
@@ -101,7 +106,7 @@
         pageview,summary,
         newstype.newsTName,
         (SELECT CONCAT(id,'|',title) FROM t_news WHERE reviewstatus=1 and publishdate > news.publishdate ORDER BY
-        publishdate DESC LIMIT 1) as `front`,
+        publishdate ASC LIMIT 1) as `front`,
         (SELECT CONCAT(id,'|',title) FROM t_news WHERE reviewstatus=1 and publishdate <![CDATA[<]]> news.publishdate ORDER BY
         publishdate DESC LIMIT 1) as `next`
         FROM
@@ -120,7 +125,9 @@
     </update>
     <update id="updateReviewInfo" parameterType="zy.news.web.ui.result.ReviewInfo">
         UPDATE t_news
-        SET reviewstatus = #{reviewstatus,jdbcType=TINYINT},
+        SET
+        notRiview=1,
+        reviewstatus = #{reviewstatus,jdbcType=TINYINT},
         reviewer = #{reviewer,jdbcType=VARCHAR},
         reviewdate = #{reviewdate,jdbcType=TIMESTAMP}
         <if test="reviewComment != null and reviewComment !=''">

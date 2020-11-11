@@ -35,7 +35,9 @@
   </insert>
     <update id="updateByPrimaryKey" parameterType="zy.news.web.bean.KnlgeShare">
     update t_knowledgeshare
-    set title = #{title,jdbcType=VARCHAR},
+    set
+      notRiview=0,
+      title = #{title,jdbcType=VARCHAR},
       author = #{author,jdbcType=VARCHAR},
       publishdate = #{publishdate,jdbcType=TIMESTAMP},
       summary= #{summary,jdbcType=VARCHAR},
@@ -64,9 +66,8 @@
         <if test="author !=null and author !=''">
             and t_share.author=#{author,jdbcType=VARCHAR}
         </if>
-        <if test="reviewStatus != 2">
-            and t_share.reviewstatus=#{reviewStatus,jdbcType=TINYINT}
-        </if>
+        <if test="reviewStatus != 2">and t_share.reviewstatus=#{reviewStatus,jdbcType=TINYINT}</if>
+        <if test="notReview == 1">AND t_share.notRiview=0</if>
         )tmp_share_t
         LEFT JOIN t_comment cmt ON tmp_share_t.id = cmt.articleid
         <if test="isGood">
@@ -104,7 +105,7 @@
         (SELECT CONCAT(id,'|',title) FROM t_knowledgeshare WHERE reviewstatus=1 and publishdate > tmp_t.publishdate
         <choose>
             <when test="1 == isGood">ORDER BY goodnum DESC, (goodnum/(goodnum+badnum)) DESC</when>
-            <otherwise>ORDER BY publishdate DESC</otherwise>
+            <otherwise>ORDER BY publishdate ASC </otherwise>
         </choose>
         LIMIT 1) as `front`,
         (SELECT CONCAT(id,'|',title) as goodPercent FROM t_knowledgeshare WHERE reviewstatus=1 and publishdate
@@ -118,7 +119,8 @@
         FROM (
         SELECT
         shr.*,
-        (SELECT COUNT( cmt.id ) FROM t_comment cmt WHERE cmt.articleid=#{id,jdbcType=BIGINT}  AND cmt.reviewstatus=1)AS cmtCount
+        (SELECT COUNT( cmt.id ) FROM t_comment cmt WHERE cmt.articleid=#{id,jdbcType=BIGINT} AND cmt.reviewstatus=1)AS
+        cmtCount
         FROM
         t_knowledgeshare shr
         WHERE
@@ -128,7 +130,9 @@
     </select>
     <update id="updateReviewInfo" parameterType="zy.news.web.ui.result.ReviewInfo">
         UPDATE t_knowledgeshare
-        SET reviewstatus = #{reviewstatus,jdbcType=TINYINT},
+        SET
+        notRiview=1,
+        reviewstatus = #{reviewstatus,jdbcType=TINYINT},
         reviewer = #{reviewer,jdbcType=VARCHAR},
         reviewdate = #{reviewdate,jdbcType=TIMESTAMP}
         <if test="reviewComment != null and reviewComment !=''">

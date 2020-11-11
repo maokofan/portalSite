@@ -1,5 +1,6 @@
 package zy.news.web.service;
 
+import zy.news.web.ui.param.PageReview;
 import zy.news.web.zsys.bean.Page;
 import zy.news.web.bean.News;
 import zy.news.web.bean.NewsSimple;
@@ -16,10 +17,9 @@ public interface INews extends IBaseService<News>, IReview {
     /**
      * 分页获取新闻列表
      *
-     * @param page
-     * @param reviewStatus 审核状态
+     * @param pageReview 审核状态
      * @return
      */
-    PageValuesResult<NewsSimple> getNews(Page page, ReviewStatus reviewStatus) throws Exception;
+    PageValuesResult<NewsSimple> getNews(PageReview pageReview) throws Exception;
 
 }

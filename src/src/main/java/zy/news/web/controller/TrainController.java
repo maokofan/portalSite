@@ -31,10 +31,11 @@ public class TrainController {
     @GetMapping("existTitle")
     @ExcuteInterfaceDsrc("标题是否重复")
     @ExcutePermission
-    public boolean existTitle(@RequestParam String title) throws Exception {
+    public boolean existTitle(@RequestParam String title, @RequestParam Long id) throws Exception {
         OrgTrain record = new OrgTrain();
         record.setTitle(title);
-        return trainService.exist(record);
+        record.setId(id);
+        return trainService.exist(record, null);
     }
 
     @PostMapping("addOrgTrain")

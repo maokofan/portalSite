@@ -4,12 +4,9 @@ import maoko.common.file.FileIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import zy.news.web.bean.ContentBase;
+import zy.news.web.bean.*;
 import zy.news.web.zsys.bean.Page;
 import zy.news.common.exception.WarningException;
-import zy.news.web.bean.ArticlAnnex;
-import zy.news.web.bean.OrgTrain;
-import zy.news.web.bean.SysUser;
 import zy.news.web.mapper.OrgTrainMapper;
 import zy.news.web.service.IAnnex;
 import zy.news.web.service.IFiles;
@@ -41,22 +38,31 @@ public class SvrImpOrgTrain extends ServiceBase implements IOrgTrain {
     }
 
     @Override
-    public boolean exist(OrgTrain record) {
-        return mapper.exist(record) > 0;
+    public boolean exist(OrgTrain record, OrgTrain tmpRecord) {
+        if (null == tmpRecord && null != record.getId() && record.getId() > 0) {
+            tmpRecord = mapper.selectRecordWithOutBlobByPrimaryKey(record.getId());
+        }
+        if (tmpRecord == null) {
+            return mapper.exist(record) > 0;
+        } else {
+            if (!record.getTitle().equals(tmpRecord.getTitle())) {
+                return mapper.exist(record) > 0;
+            }
+            return false;
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void add(HttpSession session, OrgTrain record) throws Exception {
         record.validate();
-
-        if (exist(record)) {
+        if (exist(record, null)) {
             throw new Exception("名称已存在，请修改后再试一试！");
         }
         SysUser user = userCache.getUserFromSession(session);
         //赋值
         record.setId(new Long(FileIDUtil.getNextIdLong()));
-        record.setAuthor(user.getUsername());
+        record.setAuthor(user.getRealname());
         record.setPublishdate(new Date());
         record.convertContent2Blob();
         record.setPageview(0L);
@@ -94,7 +100,7 @@ public class SvrImpOrgTrain extends ServiceBase implements IOrgTrain {
         if (tmpRecord == null) {
             throw new Exception(record.getId() + "已不存在！");
         }
-        if (!record.getTitle().equals(tmpRecord.getTitle()) && exist(record)) {
+        if (exist(record, tmpRecord)) {
             throw new Exception(record.getTitle() + "名称已存在，请修改后再试一试！");
         }
         SysUser user = userCache.getUserFromSession(session);

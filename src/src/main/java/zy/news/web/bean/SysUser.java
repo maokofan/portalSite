@@ -3,6 +3,7 @@ package zy.news.web.bean;
 import lombok.Data;
 import maoko.common.StringUtil;
 import maoko.common.agorithm.AesCipher;
+import sun.misc.BASE64Encoder;
 import zy.news.common.exception.WarningException;
 import zy.news.web.zsys.bean.IValidate;
 import zy.news.web.zsys.gson.MyExpose;

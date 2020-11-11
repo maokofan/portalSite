@@ -33,7 +33,9 @@
   </insert>
     <update id="updateByPrimaryKey" parameterType="zy.news.web.bean.Notice">
     update t_notice
-    set title = #{title,jdbcType=VARCHAR},
+    set
+      notRiview=0,
+      title = #{title,jdbcType=VARCHAR},
       ntid = #{ntid,jdbcType=BIGINT},
       author = #{author,jdbcType=VARCHAR},
       publishdate = #{publishdate,jdbcType=TIMESTAMP},
@@ -60,6 +62,7 @@
         t_notice notice
         LEFT JOIN t_noticetype noticetype ON notice.ntid=noticetype.ntid
         <if test="reviewStatus != 2">WHERE notice.reviewstatus=#{reviewStatus,jdbcType=TINYINT}</if>
+        <if test="notReview == 1">AND notice.notRiview=0</if>
         ORDER BY publishdate DESC
         <if test="reviewStatus == 2">
             ,reviewstatus ASC
@@ -85,7 +88,7 @@
        nt.reviewer, nt. reviewdate,  nt.pageview, nt.summary,
        ntp.noticeTName,
         (SELECT CONCAT(id,'|',title) FROM t_notice WHERE reviewstatus=1 and publishdate > nt.publishdate ORDER BY
-        publishdate DESC LIMIT 1) as `front`,
+        publishdate ASC LIMIT 1) as `front`,
         (SELECT CONCAT(id,'|',title) FROM t_notice WHERE reviewstatus=1 and publishdate <![CDATA[<]]> nt.publishdate ORDER BY
         publishdate DESC LIMIT 1) as `next`
     FROM
@@ -102,7 +105,9 @@
     </update>
     <update id="updateReviewInfo" parameterType="zy.news.web.ui.result.ReviewInfo">
         UPDATE t_notice
-        SET reviewstatus = #{reviewstatus,jdbcType=TINYINT},
+        SET
+        notRiview=1,
+        reviewstatus = #{reviewstatus,jdbcType=TINYINT},
         reviewer = #{reviewer,jdbcType=VARCHAR},
         reviewdate = #{reviewdate,jdbcType=TIMESTAMP}
         <if test="reviewComment != null and reviewComment !=''">

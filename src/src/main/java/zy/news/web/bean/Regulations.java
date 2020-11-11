@@ -9,7 +9,6 @@ import java.util.Date;
 @Data
 public class Regulations extends ContentBase implements IValidate {
     private Long id;
-    private String title;
     private String author;
     private Date publishdate;
     private Integer dptid;
@@ -23,9 +22,6 @@ public class Regulations extends ContentBase implements IValidate {
 
     @Override
     public void validate() throws Exception {
-        if (StringUtil.isStrNullOrWhiteSpace(title)) {
-            throw new Exception("title为空");
-        }
         if (null == dptid) {
             throw new Exception("deptid为空！");
         }

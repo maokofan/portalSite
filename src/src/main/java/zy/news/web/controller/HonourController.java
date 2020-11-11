@@ -28,10 +28,11 @@ public class HonourController {
     @GetMapping("existTitle")
     @ExcuteInterfaceDsrc("标题是否重复")
     @ExcutePermission
-    public boolean existTitle(@RequestParam String title) throws Exception {
+    public boolean existTitle(@RequestParam String title, @RequestParam Long id) throws Exception {
         Honour record = new Honour();
         record.setTitle(title);
-        return honourService.exist(record);
+        record.setId(id);
+        return honourService.exist(record,null);
     }
 
     @PostMapping("addHonour")

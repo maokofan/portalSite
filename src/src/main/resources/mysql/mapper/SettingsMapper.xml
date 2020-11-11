@@ -64,24 +64,24 @@
     <select id="getToDolist" parameterType="zy.news.web.ui.param.RoleHas" resultType="zy.news.web.ui.result.ToDoItem">
         SELECT * FROM(
         SELECT NULL as articletype,NULL as `count`
-         <if test="newsRole or @zy.news.web.bean.SysUser@ADMIN_NAME ==  username">
-             UNION ALL
-             SELECT 0 as articletype,COUNT(id) as `count` from t_news WHERE reviewstatus=0
-         </if>
+        <if test="newsRole or @zy.news.web.bean.SysUser@ADMIN_NAME ==  username">
+            UNION ALL
+            SELECT 0 as articletype,COUNT(id) as `count` from t_news WHERE reviewstatus=0 and notRiview=0
+        </if>
         <if test="noticeRole or @zy.news.web.bean.SysUser@ADMIN_NAME ==  username">
             UNION ALL
-            SELECT 1 as articletype, COUNT(id) as `count` from t_notice WHERE reviewstatus=0
+            SELECT 1 as articletype, COUNT(id) as `count` from t_notice WHERE reviewstatus=0 and notRiview=0
         </if>
         <if test="shareRole or @zy.news.web.bean.SysUser@ADMIN_NAME ==  username">
-             UNION ALL
-             SELECT 6 as articletype,COUNT(id) as `count` from t_knowledgeshare WHERE reviewstatus=0
+            UNION ALL
+            SELECT 6 as articletype,COUNT(id) as `count` from t_knowledgeshare WHERE reviewstatus=0 and notRiview=0
         </if>
         <if test="comentRole or @zy.news.web.bean.SysUser@ADMIN_NAME ==  username">
             UNION ALL
-            SELECT 7 as articletype,COUNT(id) as `count` from t_comment WHERE reviewstatus=0
+            SELECT 7 as articletype,COUNT(id) as `count` from t_comment WHERE reviewstatus=0 and notRiview=0
         </if>
         )tmp_todo_t
-        WHERE articletype  is NOT NULL
+        WHERE articletype is NOT NULL and `count` > 0
     </select>
     <select id="selectUserRoleList" resultType="zy.news.web.ui.param.RoleHas">
         SELECT

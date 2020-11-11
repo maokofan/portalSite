@@ -57,7 +57,22 @@ public interface SysRoleMapper {
      * @param roleids
      * @return
      */
+    @Deprecated
     long countByExampleRolePerms(@Param("roleids") List<Long> roleids);
+
+    /**
+     * 删除指定角色关联的权限
+     *
+     * @param id
+     */
+    void deleteRolePermsByRoleId(@Param("id") Long id);
+
+    /**
+     * 删除指定角色的用户关联
+     *
+     * @param id
+     */
+    void deleteRoleUsersByRoleId(@Param("id") Long id);
 
     /**
      * 检查roleids 是否在 t_sys_roleusers 表中存在记录
@@ -65,6 +80,7 @@ public interface SysRoleMapper {
      * @param roleids
      * @return
      */
+    @Deprecated
     long countRoleUsers(@Param("roleids") List<Long> roleids);
 
     /**
@@ -121,7 +137,7 @@ public interface SysRoleMapper {
     long selectRoleByName(@Param("role") String roleNam);
 
     /**
-     * 检查用户具有权限个数
+     * 检查用户具有角色个数
      *
      * @param userid
      * @return

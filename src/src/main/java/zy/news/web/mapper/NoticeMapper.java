@@ -17,7 +17,7 @@ public interface NoticeMapper {
 
     Notice selectByPrimaryKey(Long id);
 
-    List<NoticeSimple> selectAllNoticeSimple(@Param("reviewStatus") Byte reviewStatus);
+    List<NoticeSimple> selectAllNoticeSimple(@Param("reviewStatus") Byte reviewStatus, @Param("notReview") Byte notReview);
 
     int updateByPrimaryKey(Notice record);
 

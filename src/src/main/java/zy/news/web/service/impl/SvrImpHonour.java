@@ -39,8 +39,18 @@ public class SvrImpHonour extends ServiceBase implements IHonour {
     }
 
     @Override
-    public boolean exist(Honour record) {
-        return mapper.exist(record) > 0;
+    public boolean exist(Honour record,Honour tmpRecord) {
+        if (null == tmpRecord &&null != record.getId() && record.getId() > 0) {
+            tmpRecord = mapper.selectRecordWithOutBlobByPrimaryKey(record.getId());
+        }
+        if (tmpRecord == null) {
+            return mapper.exist(record) > 0;
+        } else {
+            if (!record.getTitle().equals(tmpRecord.getTitle())) {
+                return mapper.exist(record) > 0;
+            }
+            return false;
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -48,7 +58,7 @@ public class SvrImpHonour extends ServiceBase implements IHonour {
     public void add(HttpSession session, Honour record) throws Exception {
         record.validate();
 
-        if (exist(record)) {
+        if (exist(record,null)) {
             throw new Exception("名称已存在，请修改后再试一试！");
         }
         SysUser user = userCache.getUserFromSession(session);
@@ -101,7 +111,7 @@ public class SvrImpHonour extends ServiceBase implements IHonour {
         if (tmpRecord == null) {
             throw new Exception(record.getId() + "已不存在！");
         }
-        if (!record.getTitle().equals(tmpRecord.getTitle()) && exist(record)) {
+        if (exist(record,tmpRecord)) {
             throw new Exception(record.getTitle() + "名称已存在，请修改后再试一试！");
         }
         SysUser user = userCache.getUserFromSession(session);

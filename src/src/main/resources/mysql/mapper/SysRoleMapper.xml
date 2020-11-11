@@ -28,7 +28,7 @@
     <select id="selectAll" resultMap="BaseResultMap">
     select id, `role`, descr
     from t_sys_role t
-    where t.role != '@zy.news.web.bean.SysUser@ADMIN_ROLE'
+    where t.role != '${@zy.news.web.bean.SysUser@ADMIN_ROLE}'
   </select>
 
     <select id="checkRolePermsExist" parameterType="zy.news.web.ui.param.RolePermsBind"
@@ -64,6 +64,14 @@
         </foreach>
         )
     </select>
+    <delete id="deleteRolePermsByRoleId" parameterType="java.lang.Long">
+    delete from t_sys_roleperms
+    where roleid = #{id,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteRoleUsersByRoleId" parameterType="java.lang.Long">
+    delete from t_sys_roleusers
+    where roleid = #{id,jdbcType=BIGINT}
+    </delete>
     <select id="countRoleUsers" parameterType="java.util.List" resultType="java.lang.Long">
         select count(*) from t_sys_roleusers
         where roleid in (
@@ -119,26 +127,25 @@
         AND tc.id IN (
         SELECT DISTINCT moduleid FROM T_SYS_PERMISSION WHERE id IN ( SELECT DISTINCT permissionid FROM T_SYS_ROLEPERMS WHERE roleid = #{roleid,jdbcType=BIGINT} ))
     </select>
-    <update id="delSpecRoleMoudle">
-        delete from T_SYS_ROLEPERMS trp
-        where trp.roleid=#{roleid,jdbcType=BIGINT}
-    </update>
+    <delete id="delSpecRoleMoudle">
+        delete from T_SYS_ROLEPERMS
+        where roleid=#{roleid,jdbcType=BIGINT}
+    </delete>
     <insert id="bindSpecRoleMoudle">
         INSERT INTO T_SYS_ROLEPERMS(ROLEID,PERMISSIONID)
         (SELECT #{roleid,jdbcType=BIGINT},TPM.ID FROM T_SYS_PERMISSION TPM
         WHERE TPM.mustneed !=1 AND TPM.moduleid !=-1 AND TPM.MODULEID=#{mid,jdbcType=BIGINT})
     </insert>
-    <update id="unBindSpecRoleMoudle">
-        delete from T_SYS_ROLEPERMS trp
-        where trp.roleid=#{modulesBind.roleid,jdbcType=BIGINT}
-        and trp.permissionid in (
+    <delete id="unBindSpecRoleMoudle">
+        delete from T_SYS_ROLEPERMS
+        where roleid=#{modulesBind.roleid,jdbcType=BIGINT}
+        and permissionid in (
         select TPM.id from T_SYS_PERMISSION TPM
         where TPM.moduleid in
         <foreach collection="modulesBind.moudleids" open="(" close=")" separator="," item="mid">
             #{mid,jdbcType=BIGINT}
-        </foreach>
-        )
-    </update>
+        </foreach>)
+    </delete>
     <select id="selectRoleByName" resultType="java.lang.Long">
         select  count(*) from t_sys_role t
         where t.role=#{role,jdbcType=VARCHAR}

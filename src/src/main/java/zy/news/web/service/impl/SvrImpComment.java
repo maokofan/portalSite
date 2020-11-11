@@ -35,7 +35,7 @@ public class SvrImpComment implements IComment {
 
     @Deprecated
     @Override
-    public boolean exist(Comment record) {
+    public boolean exist(Comment record,Comment tmprecord) {
         return false;
     }
 

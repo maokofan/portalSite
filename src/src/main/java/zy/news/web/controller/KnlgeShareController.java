@@ -36,10 +36,11 @@ public class KnlgeShareController {
     @GetMapping("existTitle")
     @ExcuteInterfaceDsrc("标题是否重复")
     @ExcutePermission
-    public boolean existTitle(@RequestParam String title) throws Exception {
+    public boolean existTitle(@RequestParam String title, @RequestParam Long id) throws Exception {
         KnlgeShare record = new KnlgeShare();
         record.setTitle(title);
-        return kngeShareService.exist(record);
+        record.setId(id);
+        return kngeShareService.exist(record,null);
     }
 
     @PostMapping("addKnlgeShare")
@@ -67,21 +68,33 @@ public class KnlgeShareController {
     @ExcuteInterfaceDsrc("获取当前用户发布分享列表")
     @ExcutePermission
     public PageValuesResult<KnlgeShareSimple> getCurrentUserShares(HttpSession session, @RequestBody Page page) throws Exception {
-        return kngeShareService.getKnowledgeShares(session, page, ReviewStatus.所有, false);
+        PageReview pageReview = new PageReview();
+        pageReview.setCurrent(page.getCurrent());
+        pageReview.setPageSize(page.getSize());
+        pageReview.setStatus(ReviewStatus.所有.getValue());
+        return kngeShareService.getKnowledgeShares(session, pageReview, false);
     }
 
     @PostMapping("getKnlgeShares")
     @ExcuteInterfaceDsrc("获取已通过审核分享列表")
     @ExcutePermission(userType = ExcuteUserType.游客)
     public PageValuesResult<KnlgeShareSimple> getKnlgeShares(@RequestBody Page page) throws Exception {
-        return kngeShareService.getKnowledgeShares(null, page, ReviewStatus.已通过, false);
+        PageReview pageReview = new PageReview();
+        pageReview.setCurrent(page.getCurrent());
+        pageReview.setPageSize(page.getSize());
+        pageReview.setStatus(ReviewStatus.已通过.getValue());
+        return kngeShareService.getKnowledgeShares(null, pageReview, false);
     }
 
     @PostMapping("getGoodKnlgeShares")
     @ExcuteInterfaceDsrc("获取精华帖分享列表")
     @ExcutePermission(userType = ExcuteUserType.游客)
     public PageValuesResult<KnlgeShareSimple> getGoodKnlgeShares(HttpSession session, @RequestBody Page page) throws Exception {
-        return kngeShareService.getKnowledgeShares(null, page, ReviewStatus.已通过, true);
+        PageReview pageReview = new PageReview();
+        pageReview.setCurrent(page.getCurrent());
+        pageReview.setPageSize(page.getSize());
+        pageReview.setStatus(ReviewStatus.已通过.getValue());
+        return kngeShareService.getKnowledgeShares(null, pageReview, true);
     }
 
     @GetMapping("getKnlgeShareDetail")
@@ -106,7 +119,7 @@ public class KnlgeShareController {
     @ExcuteInterfaceDsrc("获取已发布文章列表")
     @ExcutePermission
     public PageValuesResult<KnlgeShareSimple> getReviewRecords(@RequestBody PageReview param) throws Exception {
-        return kngeShareService.getKnowledgeShares(null, param.getPage(), param.getStatus(), false);
+        return kngeShareService.getKnowledgeShares(null, param, false);
     }
 
     @GetMapping("getReviewInfo")

@@ -34,7 +34,7 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select id, title, author, publishdate,pageview,
         (SELECT CONCAT(id,'|',title) FROM t_orgtrain WHERE  publishdate > orgtrain.publishdate ORDER BY
-        publishdate DESC LIMIT 1) as `front`,
+        publishdate ASC LIMIT 1) as `front`,
         (SELECT CONCAT(id,'|',title) FROM t_orgtrain WHERE  publishdate <![CDATA[<]]> orgtrain.publishdate ORDER BY
         publishdate DESC LIMIT 1) as `next`
     from t_orgtrain orgtrain

@@ -1,5 +1,6 @@
 package zy.news.web.service;
 
+import zy.news.web.ui.param.PageReview;
 import zy.news.web.zsys.bean.Page;
 import zy.news.web.bean.Notice;
 import zy.news.web.bean.NoticeSimple;
@@ -14,9 +15,8 @@ public interface INotice extends IBaseService<Notice>, IReview {
     /**
      * 分页获取通告列表
      *
-     * @param page
-     * @param reviewStatus 审核状态
+     * @param pageReview
      * @return
      */
-    PageValuesResult<NoticeSimple> getNotice(Page page, ReviewStatus reviewStatus) throws Exception;
+    PageValuesResult<NoticeSimple> getNotice(PageReview pageReview) throws Exception;
 }

@@ -28,10 +28,14 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
     <select id="selectAll" resultMap="BaseResultMap">
-    select id, username, realname
-    from t_sys_user
-    where username != '${@zy.news.web.bean.SysUser@ADMIN_NAME}'
-  </select>
+        select id, username, realname
+        from t_sys_user
+        where username != '${@zy.news.web.bean.SysUser@ADMIN_NAME}'
+        <if test="fastSearch !=null and fastSearch != ''">
+            and (username like #{fastSearch,jdbcType=VARCHAR} OR realname like #{fastSearch,jdbcType=VARCHAR})
+        </if>
+        order by username asc
+    </select>
     <update id="bindUserRole">
     update T_SYS_USER
     set ROLEID = #{roleid,jdbcType=NUMERIC}
@@ -79,10 +83,10 @@
     <update id="unBindSpecUserRole" parameterType="zy.news.web.ui.param.RoleUserBind">
         DELETE
         FROM
-        t_sys_roleusers tsr
+        t_sys_roleusers
         WHERE
-        tsr.userid = #{userBind.userid,jdbcType=BIGINT}
-        AND tsr.roleid IN
+        userid = #{userBind.userid,jdbcType=BIGINT}
+        AND roleid IN
         <foreach collection="userBind.roleids" item="roleid" open="(" separator="," close=")">
             #{roleid,jdbcType=BIGINT}
         </foreach>

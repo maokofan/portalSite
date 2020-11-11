@@ -9,11 +9,11 @@ import java.util.Date;
 
 @Data
 public class Honour extends ContentBase implements IValidate {
+    private final static int HONORTITLE_LEN = 200;
     private Long id;
     private Long imageid;//可为空
     private String pepole;
     private String honortitle;
-    private String title;
     private String author;
     private Date publishdate;
     private Long pageview;
@@ -31,11 +31,8 @@ public class Honour extends ContentBase implements IValidate {
         if (StringUtil.isStrNullOrWhiteSpace(honortitle)) {
             throw new Exception("honortitle字段为空！");
         }
-        if (honortitle.length() > 200) {
+        if (honortitle.length() > HONORTITLE_LEN) {
             throw new Exception("honortitle文字个数过长，限定200个汉字和标点！");
-        }
-        if (StringUtil.isStrNullOrWhiteSpace(title)) {
-            throw new Exception("title字段为空！");
         }
         super.validate();
     }

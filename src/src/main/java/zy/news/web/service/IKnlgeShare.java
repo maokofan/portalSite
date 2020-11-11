@@ -1,5 +1,6 @@
 package zy.news.web.service;
 
+import zy.news.web.ui.param.PageReview;
 import zy.news.web.zsys.bean.Page;
 import zy.news.web.bean.KnlgeShare;
 import zy.news.web.bean.KnlgeShareSimple;
@@ -18,13 +19,12 @@ public interface IKnlgeShare extends IBaseService<KnlgeShare>, IReview {
      * 分页获取列表
      *
      * @param session
-     * @param page
-     * @param reviewStatus
-     * @param isGood       是否更具点赞度排序
+     * @param pageReview
+     * @param isGood     是否更具点赞度排序
      * @return
      * @throws Exception
      */
-    PageValuesResult<KnlgeShareSimple> getKnowledgeShares(HttpSession session, Page page, ReviewStatus reviewStatus, boolean isGood) throws Exception;
+    PageValuesResult<KnlgeShareSimple> getKnowledgeShares(HttpSession session, PageReview pageReview, boolean isGood) throws Exception;
 
     /**
      * 点赞
